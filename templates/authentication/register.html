@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <!-- Display flashed messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <ul>
+      {% for category, message in messages %}
+        <li class="{{ category }}">{{ message }}</li>
+      {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+
+  <!-- Register Content -->
+  <div id="register-content">
+      <h2>Register</h2>
+      <form method="post">
+          {{ form.hidden_tag() }}  <!-- CSRF token -->
+          <div class="mb-3">
+              {{ form.email.label(class="form-label") }}
+              {{ form.email(class="form-control") }}
+          </div>
+          <div class="mb-3">
+              {{ form.password.label(class="form-label") }}
+              {{ form.password(class="form-control") }}
+          </div>
+          <div class="mb-3">
+              {{ form.confirm_password.label(class="form-label") }}
+              {{ form.confirm_password(class="form-control") }}
+          </div>
+          <div class="mb-3">
+              {{ form.account_type.label(class="form-label") }}
+              {{ form.account_type(class="form-control") }}
+          </div>
+          {{ form.submit(class="btn btn-primary") }}
+      </form>
+  </div>
+{% endblock %}
+

@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+        <div class="container mt-5">
+        <h2>Create New Incident</h2>
+        <form method="post">
+            {{ form.hidden_tag() }}
+            <div class="mb-3">
+                {{ form.system.label(class="form-label") }}
+                {{ form.system(class="form-control") }}
+            </div>
+            <div class="mb-3">
+                {{ form.product.label(class="form-label") }}
+                {{ form.product(class="form-control") }}
+            </div>
+            <div class="mb-3">
+                {{ form.issue.label(class="form-label") }}
+                {{ form.issue(class="form-control") }}
+            </div>
+            <div class="mb-3">
+                {{ form.time_of_occurrence.label(class="form-label") }}
+                {{ form.time_of_occurrence(class="form-control") }}
+            </div>
+            <div class="mb-3">
+                {{ form.status.label(class="form-label") }}
+                {{ form.status(class="form-select") }}
+            </div>
+            {{ form.submit(class="btn btn-primary") }}
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}

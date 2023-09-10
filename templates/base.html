@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Incident Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+
+    <style>
+        /* Ensuring full height for sidebar */
+        html, body {
+            height: 100%;
+        }
+        #sidebar {
+            min-height: 100%;
+            transition: all 0.3s;
+        }
+
+        body:not(.sb-nav-fixed) #layoutSidenav_nav {
+            transform: translateX(-225px);
+        }
+
+        body.sb-nav-toggled #layoutSidenav_nav {
+            transform: translateX(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid p-0">
+        <nav class="navbar navbar-expand-lg bg-dark" data-bs-theme="dark">
+            <div class="container-fluid">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                  <li class="navbar-brand">
+                    <a class="nav-link" id="sidebarToggle" aria-current="page" href="#">
+                        <i id="toggleIcon" class="fas fa-bars"></i>
+                    </a>
+                  </li>
+                  <li class="navbar-brand">
+                    <a href="{{ url_for('dash.dashboard') }}" class="nav-link">Dashboard</a>
+                  </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+
+    <div class="container-fluid">
+
+        <div class="row vh-100 position-relative">
+            <div class="col-md-2">
+                 <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-dark text-white sidebar collapse position-absolute top-0 start-0">
+                <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                  <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
+                </a>
+                <hr>
+                <ul class="nav nav-pills flex-column mb-auto">
+                  <li class="nav-item">
+                    <a href="{{ url_for('dash.dashboard') }}" class="nav-link text-white {% if request.endpoint == 'dash.dashboard' %}active{% endif %}">
+                      <svg class="bi me-2" width="16" height="16"><use xlink:href="#home"></use></svg>
+                      Dashboard
+                    </a>
+                  </li>
+                  <li>
+                    <a href="{{ url_for('incident.incidents_overview') }}" class="nav-link text-white {% if request.endpoint == 'incident.incidents_overview' %}active{% endif %}">
+                      <svg class="bi me-2" width="16" height="16"><use xlink:href="#speedometer2"></use></svg>
+                      Incidents
+                    </a>
+                  </li>
+                  <li>
+                    <a href="{{ url_for('incident.create_incident') }}" class="nav-link text-white {% if request.endpoint == 'incident.create_incident' %}active{% endif %}">
+                      <svg class="bi me-2" width="16" height="16"><use xlink:href="#speedometer2"></use></svg>
+                      Create Incidents
+                    </a>
+                  </li>
+                  <li>
+                    <a href="{{ url_for('auth.login') }}" class="nav-link text-white {% if request.endpoint == 'auth.login' %}active{% endif %}">
+                      <svg class="bi me-2" width="16" height="16"><use xlink:href="#table"></use></svg>
+                      Sign in
+                    </a>
+                  </li>
+                  <li>
+                    <a href="{{ url_for('auth.register') }}" class="nav-link text-white {% if request.endpoint == 'auth.register' %}active{% endif %}">
+                      <svg class="bi me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
+                      Register
+                    </a>
+                  </li>
+                </ul>
+                <hr>
+                <div class="dropdown">
+                  <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                    <strong>More</strong>
+                  </a>
+                  <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1" style="">
+                    <li><a class="dropdown-item" href="#">Profile</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">Sign out</a></li>
+                  </ul>
+                </div>
+              </nav>
+            </div>
+
+            <div class="col-md-10">
+                 <!-- Main content area -->
+                <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                    <div class="d-flex justify-content-between">
+                        <h1 class="h2" id="dashboard-content">Incident Management System</h1>
+                    </div>
+                      <!-- Display flashed messages -->
+                      {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                          <ul>
+                          {% for category, message in messages %}
+                            <li class="{{ category }}">{{ message }}</li>
+                          {% endfor %}
+                          </ul>
+                        {% endif %}
+                      {% endwith %}
+
+                    {% block content %}
+
+
+                    {% endblock %}
+                </main>
+            </div>
+
+
+            <!-- Footer -->
+            <footer class="bg-dark text-white text-center py-3 fixed-bottom">
+                &copy; Keshav Vaisnav
+            </footer>
+        </div>
+
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    document.getElementById("sidebarToggle").addEventListener("click", function() {
+        var sidebar = document.getElementById("sidebar");
+        var toggleIcon = document.getElementById("toggleIcon");
+        if (sidebar.classList.contains("d-md-block")) {
+            sidebar.classList.remove("d-md-block");
+            toggleIcon.classList.remove("fas", "fa-bars");
+            toggleIcon.classList.add("fas", "fa-arrow-right");
+        } else {
+            sidebar.classList.add("d-md-block");
+            toggleIcon.classList.remove("fas", "fa-arrow-right");
+            toggleIcon.classList.add("fas", "fa-bars");
+        }
+    });
+    </script>
+
+</body>
+
+</html>
+
+
