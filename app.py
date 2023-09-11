@@ -5,12 +5,13 @@ from controllers.authentication import auth
 from controllers.dashboard import dash
 from controllers.incidents import incident
 from extensions import login_manager
-
+from flask_migrate import Migrate
 
 app = Flask(__name__)
 app.config.from_object('config.DefaultConfig')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # To suppress a warning
 db.init_app(app)
+migrate = Migrate(app, db)
 login_manager.init_app(app)
 login_manager.login_view = "auth.login"
 
