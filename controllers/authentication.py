@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash
 from flask_login import login_user, logout_user, current_user, login_required
+from forms.admin_user_creation_form import AdminUserCreationForm
 from models.db_models import User, db
 from forms.registration_form import RegistrationForm
 from forms.login_form import LoginForm
@@ -16,10 +17,7 @@ def register():
         if user:
             flash('Email already exists')
             return redirect(url_for('auth.register'))
-        user = User(email=form.email.data)
-        user.set_password(form.password.data)
-        db.session.add(user)
-        db.session.commit()
+        User.create_user(email=form.email.data, password=form.password.data)
         flash('Registration successful!', 'success')
         return redirect(url_for('auth.login'))
     return render_template('authentication/register.html', form=form)
@@ -50,11 +48,10 @@ def create_admin_user():
     form = AdminUserCreationForm()
 
     if form.validate_on_submit():
-        user = User(email=form.email.data)
-        user.set_password(form.password.data)
-        user.account_type = form.account_type.data
-        db.session.add(user)
-        db.session.commit()
+        user = User.create_user(email=form.email.data,
+                                password=form.password.data,
+                                account_type=form.account_type.data,
+                                role=form.account_type.data)
         return redirect(url_for('dash.admin_dashboard'))
 
 
@@ -67,4 +64,3 @@ def logout():
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
-

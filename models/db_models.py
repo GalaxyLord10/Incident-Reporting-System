@@ -18,6 +18,13 @@ class User(db.Model, UserMixin):
     def check_password(self, password):
         return check_password_hash(self.password, password)
 
+    @classmethod
+    def create_user(cls, email, password, role="general_user"):
+        user = cls(email=email, password=cls.set_password(password), role=role, account_type=role)
+        db.session.add(user)
+        db.session.commit()
+        return user
+
     incidents = db.relationship('Incident', backref='user', lazy=True)
 
 

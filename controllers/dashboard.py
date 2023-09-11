@@ -1,7 +1,5 @@
 from flask import Blueprint, flash, url_for, redirect, render_template
 from flask_login import login_required, current_user
-from forms.incident_form import IncidentForm
-from models.db_models import Incident, db
 
 dash = Blueprint('dash', __name__)
 
