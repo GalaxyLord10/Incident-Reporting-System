@@ -1,8 +1,6 @@
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_sqlalchemy import SQLAlchemy
-
-db = SQLAlchemy()
+from extensions import db
 
 
 class User(db.Model, UserMixin):
@@ -29,6 +27,7 @@ class Incident(db.Model):
     issue = db.Column(db.Text)
     time_of_occurrence = db.Column(db.DateTime)
     status = db.Column(db.String(80), default='Ongoing')  # Default status
+    notification_status = db.Column(db.String(10), default='Unread')
 
 
 class IncidentUpdate(db.Model):
@@ -43,3 +42,4 @@ class Permission(db.Model):
     # This table can be used if not using AAD for permissions
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=True, nullable=False)
+

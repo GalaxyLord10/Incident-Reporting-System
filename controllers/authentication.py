@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash
 from flask_login import login_user, logout_user, current_user, login_required
+from forms.admin_user_creation_form import AdminUserCreationForm
 from models.db_models import User, db
 from forms.registration_form import RegistrationForm
 from forms.login_form import LoginForm
@@ -68,3 +69,24 @@ def logout():
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+
+@auth.route('/create_user', methods=['GET', 'POST'])
+@login_required
+def create_user():
+    # Ensure the user is an admin
+    if current_user.account_type != 'admin':
+        flash('You do not have permission to access this page.', 'danger')
+        return redirect(url_for('home.index'))
+
+    form = User()
+    if form.validate_on_submit():
+        user = User(email=form.email.data)
+        user.set_password(form.password.data)
+        user.account_type = form.account_type.data
+
+        db.session.add(user)
+        db.session.commit()
+        flash(f"User {form.email.data} created successfully!", 'success')
+        return redirect(url_for('home.index'))
+
+    return render_template('create_user.html', form=form)
