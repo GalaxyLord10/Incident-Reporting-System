@@ -17,10 +17,7 @@ def register():
         if user:
             flash('Email already exists')
             return redirect(url_for('auth.register'))
-        user = User(email=form.email.data)
-        user.set_password(form.password.data)
-        db.session.add(user)
-        db.session.commit()
+        User.create_user(email=form.email.data, password=form.password.data)
         flash('Registration successful!', 'success')
         return redirect(url_for('auth.login'))
     return render_template('authentication/register.html', form=form)
@@ -51,11 +48,10 @@ def create_admin_user():
     form = AdminUserCreationForm()
 
     if form.validate_on_submit():
-        user = User(email=form.email.data)
-        user.set_password(form.password.data)
-        user.account_type = form.account_type.data
-        db.session.add(user)
-        db.session.commit()
+        user = User.create_user(email=form.email.data,
+                                password=form.password.data,
+                                account_type=form.account_type.data,
+                                role=form.account_type.data)
         return redirect(url_for('dash.admin_dashboard'))
 
 
@@ -90,3 +86,4 @@ def create_user():
         return redirect(url_for('home.index'))
 
     return render_template('create_user.html', form=form)
+  
