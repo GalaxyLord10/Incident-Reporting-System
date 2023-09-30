@@ -29,6 +29,9 @@ def create_incident():
         new_incident = Incident(user_id=current_user.id, system=form.system.data, product=form.product.data, issue=form.issue.data,
                                 time_of_occurrence=form.time_of_occurrence.data, status=form.status.data)
         db.session.add(new_incident)
+        # Set the notification_status to 'Unread'
+        new_incident.notification_status = 'Unread'
+
         db.session.commit()
         flash('Incident created successfully!', 'success')
         return redirect(url_for('incident.incidents_overview'))
