@@ -2,7 +2,18 @@
 
 {% block content %}
 
-<h1>Oops, the page you are looking for does not exist!</h1>
+<p>
+{% if current_user.is_authenticated %}
+    {% if current_user.role == 'admin' %}
+        Return to the <a href="{{ url_for('admin_dashboard.dashboard') }}">admin dashboard</a>?
+    {% else %}
+        Return to your <a href="{{ url_for('dashboard.dashboard') }}">dashboard</a>?
+    {% endif %}
+{% else %}
+    Return to the <a href="{{ url_for('home.index') }}">homepage</a>?
+{% endif %}
+</p>
+
 
 {% endblock %}
 
