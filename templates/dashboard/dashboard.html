@@ -1,6 +1,38 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1 class="mt-4">Dashboard</h1>
-    <!-- ... dashboard specific content ... -->
+<!-- Display flashed messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+  <h1 class="mt-4">Dashboard</h1>
+
+  {% if current_user.role == 'admin' %}
+    <div class="alert alert-success">
+      Welcome, Admin! You have full access to manage incidents and users.
+    </div>
+    <div class="d-flex justify-content-between my-4">
+      <a href="{{ url_for('admin_dashboard.dashboard') }}" class="btn btn-primary">Admin Dashboard</a>
+      <a href="{{ url_for('incidents.overview') }}" class="btn btn-secondary">View All Incidents</a>
+      <a href="{{ url_for('users.overview') }}" class="btn btn-secondary">Manage Users</a>
+    </div>
+  {% else %}
+    <div class="alert alert-info">
+      Welcome! You can report incidents and view your previous reports.
+    </div>
+    <div class="d-flex justify-content-between my-4">
+      <a href="{{ url_for('incident.create_incident') }}" class="btn btn-primary">Report New Incident</a>
+      <a href="{{ url_for('incident.incidents_overview') }}" class="btn btn-secondary">My Reports</a>
+    </div>
+  {% endif %}
+
+
+
 {% endblock %}

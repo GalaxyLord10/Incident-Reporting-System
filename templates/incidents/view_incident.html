@@ -5,22 +5,21 @@
         <h2>Incident {{ incident.id }}</h2>
 
             <div class="mb-3">
-                {{ incident.system }}
+                <strong>System: </strong>{{ incident.system }}
             </div>
             <div class="mb-3">
-                {{ incident.product }}
+                <strong>Product: </strong>{{ incident.product }}
             </div>
             <div class="mb-3">
-                {{ incident.issue }}
+                <strong>Issue: </strong>{{ incident.issue }}
             </div>
             <div class="mb-3">
-                {{ incident.time_of_occurrence }}
+                <strong>Time of Occurrence: </strong>{{ incident.time_of_occurrence }}
             </div>
             <div class="mb-3">
-                {{ incident.status }}
+                <strong>Status: </strong>{{ incident.status }}
             </div>
+            <a href="{{ url_for('incident.incidents_overview') }}" class="btn btn-secondary">Back to Overview</a>
 
         </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock %}

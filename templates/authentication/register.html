@@ -2,15 +2,15 @@
 
 {% block content %}
   <!-- Display flashed messages -->
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      <ul>
-      {% for category, message in messages %}
-        <li class="{{ category }}">{{ message }}</li>
-      {% endfor %}
-      </ul>
-    {% endif %}
-  {% endwith %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
 
   <!-- Register Content -->
   <div id="register-content">
@@ -18,22 +18,33 @@
       <form method="post">
           {{ form.hidden_tag() }}  <!-- CSRF token -->
           <div class="mb-3">
-              {{ form.email.label(class="form-label") }}
-              {{ form.email(class="form-control") }}
+              {{ form.email.label(class="form-label", required=true) }}
+              {{ form.email(class="form-control", placeholder="Username") }}
+              {% if form.email.errors %}
+                  <div class="invalid-feedback">
+                      {{ form.email.errors[0] }}
+                  </div>
+              {% endif %}
           </div>
           <div class="mb-3">
-              {{ form.password.label(class="form-label") }}
-              {{ form.password(class="form-control") }}
+              {{ form.password.label(class="form-label", required=true) }}
+              {{ form.password(class="form-control", placeholder="Password") }}
+              {% if form.password.errors %}
+                  <div class="invalid-feedback">
+                      {{ form.password.errors[0] }}
+                  </div>
+              {% endif %}
           </div>
           <div class="mb-3">
-              {{ form.confirm_password.label(class="form-label") }}
-              {{ form.confirm_password(class="form-control") }}
+              {{ form.confirm_password.label(class="form-label", required=true) }}
+              {{ form.confirm_password(class="form-control", placeholder="Confirm Password") }}
+              {% if form.confirm_password.errors %}
+                  <div class="invalid-feedback">
+                      {{ form.confirm_password.errors[0] }}
+                  </div>
+              {% endif %}
           </div>
-          <div class="mb-3">
-              {{ form.account_type.label(class="form-label") }}
-              {{ form.account_type(class="form-control") }}
-          </div>
-          {{ form.submit(class="btn btn-primary") }}
+          {{ form.submit(class="btn btn-primary btn-lg") }}
       </form>
   </div>
 {% endblock %}

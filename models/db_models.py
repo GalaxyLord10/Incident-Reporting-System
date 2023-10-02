@@ -9,6 +9,7 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(120), nullable=False)
     role = db.Column(db.String(80), default='IncidentReportView')  # Default role
     account_type = db.Column(db.String(80), default='general_user')  # Default to general user
+    incidents = db.relationship('Incident', foreign_keys='Incident.user_id', backref='user', lazy=True)
 
     def set_password(self, password):
         self.password = generate_password_hash(password)
@@ -18,12 +19,11 @@ class User(db.Model, UserMixin):
 
     @classmethod
     def create_user(cls, email, password, role="general_user"):
-        user = cls(email=email, password=cls.set_password(password), role=role, account_type=role)
+        user = cls(email=email, role=role, account_type=role)
+        user.set_password(password)
         db.session.add(user)
         db.session.commit()
         return user
-
-    incidents = db.relationship('Incident', backref='user', lazy=True)
 
 
 class Incident(db.Model):
@@ -34,7 +34,6 @@ class Incident(db.Model):
     issue = db.Column(db.Text)
     time_of_occurrence = db.Column(db.DateTime)
     status = db.Column(db.String(80), default='Ongoing')  # Default status
-    notification_status = db.Column(db.String(10), default='Unread')
 
 
 class IncidentUpdate(db.Model):
