@@ -1,8 +1,10 @@
+from datetime import datetime
 from flask import Blueprint, flash, url_for, redirect, render_template, abort, request
 from flask_login import login_required, current_user
 from forms.incident_form import IncidentForm
 from forms.incident_update_form import IncidentUpdateForm
-from models.db_models import Incident, db, IncidentUpdate
+from models.db_models import Incident, db
+from utilities.utilities import admin_required
 
 incident = Blueprint('incident', __name__)
 
@@ -10,15 +12,19 @@ incident = Blueprint('incident', __name__)
 @incident.route('/incidents_overview')
 @login_required
 def incidents_overview():
-    incidents = Incident.query.all()
-    return render_template('incidents/overview.html', title="Incident Overview", incidents=incidents)
+    if current_user.role == 'admin':
+        incidents = Incident.query.all()  # Admins can see all incidents
+    else:
+        incidents = Incident.query.filter_by(
+            user_id=current_user.id).all()  # Regular users can only see their own incidents
+    return render_template('incidents/overview.html', incidents=incidents)
 
 
 @incident.route('/view_incident/<int:incident_id>')
 @login_required
 def view_incident(incident_id):
-    incident = Incident.query.get_or_404(incident_id)
-    return render_template('incidents/view_incident.html', incident=incident)
+    get_incident = Incident.query.get_or_404(incident_id)
+    return render_template('incidents/view_incident.html', incident=get_incident)
 
 
 @incident.route('/create_incident', methods=['GET', 'POST'])
@@ -26,8 +32,17 @@ def view_incident(incident_id):
 def create_incident():
     form = IncidentForm()
     if form.validate_on_submit():
-        new_incident = Incident(user_id=current_user.id, system=form.system.data, product=form.product.data, issue=form.issue.data,
-                                time_of_occurrence=form.time_of_occurrence.data, status=form.status.data)
+        date_field = form.date_of_occurrence.data  # Assuming this is a date object
+        time_field = form.time_of_occurrence.data  # Assuming this is a time object
+
+        # Combine date and time into a single datetime object
+        combined_datetime = datetime.combine(date_field, time_field)
+        new_incident = Incident(user_id=current_user.id,
+                                system=form.system.data,
+                                product=form.product.data,
+                                issue=form.issue.data,
+                                time_of_occurrence=combined_datetime,
+                                status=form.status.data)
         db.session.add(new_incident)
         # Set the notification_status to 'Unread'
         new_incident.notification_status = 'Unread'

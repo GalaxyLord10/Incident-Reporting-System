@@ -5,6 +5,7 @@ from models.db_models import User, db
 from forms.registration_form import RegistrationForm
 from forms.login_form import LoginForm
 from extensions import login_manager
+from utilities.utilities import admin_required
 
 auth = Blueprint('auth', __name__)
 
@@ -20,6 +21,7 @@ def register():
         User.create_user(email=form.email.data, password=form.password.data)
         flash('Registration successful!', 'success')
         return redirect(url_for('auth.login'))
+
     return render_template('authentication/register.html', form=form)
 
 
@@ -31,7 +33,10 @@ def login():
         if user:
             if user.check_password(form.password.data):
                 login_user(user)
-                return redirect(url_for('dash.dashboard'))
+                if user.account_type == 'admin':
+                    return redirect(url_for('dash.admin_dashboard'))
+                else:
+                    return redirect(url_for('dash.dashboard'))
             else:
                 flash('Incorrect password', 'warning')
         else:
@@ -40,11 +45,9 @@ def login():
 
 
 @auth.route('/create_admin_user', methods=['GET', 'POST'])
+@admin_required
 @login_required
 def create_admin_user():
-    if current_user.account_type != 'admin':
-        return redirect(url_for('dash.dashboard'))
-
     form = AdminUserCreationForm()
 
     if form.validate_on_submit():
@@ -58,6 +61,7 @@ def create_admin_user():
 @auth.route('/logout')
 def logout():
     logout_user()
+    flash('You have been logged out.', 'success')
     return redirect(url_for('dash.dashboard'))
 
 
@@ -67,13 +71,9 @@ def load_user(user_id):
 
 
 @auth.route('/create_user', methods=['GET', 'POST'])
+@admin_required
 @login_required
 def create_user():
-    # Ensure the user is an admin
-    if current_user.account_type != 'admin':
-        flash('You do not have permission to access this page.', 'danger')
-        return redirect(url_for('home.index'))
-
     form = User()
     if form.validate_on_submit():
         user = User(email=form.email.data)

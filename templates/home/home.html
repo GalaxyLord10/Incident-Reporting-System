@@ -2,6 +2,24 @@
 
 {% block content %}
 
-<h1>This is the Homepage</h1>
+<h2>Welcome to our Incident Reporting System!</h2>
+
+<p>This platform allows you to report incidents and view reports in a secure and efficient manner.</p>
+
+<div class="d-flex justify-content-between my-4">
+  <a href="{{ url_for('incident.create_incident') }}" class="btn btn-primary">Report New Incident</a>
+  <a href="{{ url_for('auth.login') }}" class="btn btn-secondary">Login</a>
+</div>
+
+<!-- Display flashed messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
 
 {% endblock %}

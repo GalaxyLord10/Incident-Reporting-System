@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Table for displaying all users -->
+<h2>All Users</h2>
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Email</th>
+        <th>Account Type</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for user in users %}
+    <tr>
+        <td>{{ user.id }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.account_type }}</td>
+        <td>
+        <td>
+<!--            <a href="{{ url_for('dash.edit_user', user_id=user.id) }}" class="btn btn-primary">Edit</a>-->
+<!--            <a href="{{ url_for('dash.delete_user', user_id=user.id) }}" class="btn btn-danger">Delete</a>-->
+<!--            <a href="{{ url_for('dash.resolve_incident', incident_id=incident.id) }}"-->
+<!--               class="btn btn-success">Resolve</a>-->
+<!--            <a href="{{ url_for('dash.mark_pending', incident_id=incident.id) }}" class="btn btn-warning">Mark-->
+<!--                as Pending</a>-->
+        </td>
+
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+
+{% endblock %}
