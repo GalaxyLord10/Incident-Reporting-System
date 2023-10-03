@@ -1,0 +1,105 @@
+{% extends 'base.html'%}
+
+{% block content %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" data-bs-dismiss="modal" role="alert">
+                    {{ message }}
+                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+<!-- User Dropdown -->
+<label for="user-dropdown">Select User: </label>
+<select id="user-dropdown">
+    <option value="">All Users</option>
+    {% for user in users %}
+    {% if user.account_type != 'admin' %}
+    <option value="{{ user.id }}"
+            {% if user.id|string== request.args.get('user_id') %}selected{% endif %}>
+    {{ user.email }}
+    </option>
+    {% endif %}
+    {% endfor %}
+</select>
+
+<div class="container mt-5">
+    <h2>Incident Overview</h2>
+    <table class="table table-striped mt-4">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Title</th>
+            <th scope="col">Status</th>
+            <th scope="col">Assigned To</th>
+            <th scope="col">Date Reported</th>
+            <th scope="col">Actions</th>
+        </tr>
+        </thead>
+        <!-- ... -->
+        <tbody>
+        {% for incident in incidents %}
+        <tr>
+            <th scope="row">{{ loop.index }}</th>
+            <td>{{ incident.system }}</td>
+            <td><span class="badge bg-{{ 'success' if incident.status == 'Resolved' else 'warning' }}">{{ incident.status }}</span>
+            </td>
+            <td>{{ incident.user.email }}</td>
+            <td>{{ incident.time_of_occurrence.strftime('%Y-%m-%d') }}</td>
+            <td>
+                <a href="{{ url_for('incident.view_incident', incident_id=incident.id) }}"
+                   class="btn btn-info btn-sm">View</a>
+                <a href="{{ url_for('dash.admin_edit_incident', incident_id=incident.id) }}"
+                   class="btn btn-secondary btn-sm">Edit</a>
+                <a href="#" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                   onclick="setDeleteUrl('{{ url_for('dash.admin_delete_incident', incident_id=incident.id) }}')">Delete</a>
+
+                <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteIncidentModal"
+                     aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="deleteIncidentModal">Confirm Delete</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                Are you sure you want to delete this incident?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <a href="" id="confirmDelete" class="btn btn-danger">Delete</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+        <!-- ... -->
+
+    </table>
+</div>
+
+
+<script>
+        document.getElementById('user-dropdown').addEventListener('change', function() {
+            const selectedUserId = this.value;
+            const url = `{{ url_for('dash.admin_incident_overview') }}?user_id=${selectedUserId}`;
+            window.location.href = url;
+        });
+
+                function setDeleteUrl(url) {
+      document.getElementById("confirmDelete").href = url;
+    }
+
+
+
+</script>
+
+
+{% endblock %}

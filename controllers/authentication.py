@@ -1,6 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, flash
-from flask_login import login_user, logout_user, current_user, login_required
-from forms.admin_user_creation_form import AdminUserCreationForm
+from flask_login import login_user, logout_user, login_required
 from models.db_models import User, db
 from forms.registration_form import RegistrationForm
 from forms.login_form import LoginForm
@@ -42,20 +41,6 @@ def login():
         else:
             flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('authentication/login.html', form=form)
-
-
-@auth.route('/create_admin_user', methods=['GET', 'POST'])
-@admin_required
-@login_required
-def create_admin_user():
-    form = AdminUserCreationForm()
-
-    if form.validate_on_submit():
-        user = User.create_user(email=form.email.data,
-                                password=form.password.data,
-                                account_type=form.account_type.data,
-                                role=form.account_type.data)
-        return redirect(url_for('dash.admin_dashboard'))
 
 
 @auth.route('/logout')

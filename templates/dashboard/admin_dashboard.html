@@ -1,38 +1,45 @@
 {% extends "base.html" %}
 {% block content %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+<div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
 
-<!-- Table for displaying all users -->
-<h2>All Users</h2>
-<table class="table table-bordered">
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>Email</th>
-        <th>Account Type</th>
-        <th>Actions</th>
-    </tr>
-    </thead>
-    <tbody>
-    {% for user in users %}
-    <tr>
-        <td>{{ user.id }}</td>
-        <td>{{ user.email }}</td>
-        <td>{{ user.account_type }}</td>
-        <td>
-        <td>
-<!--            <a href="{{ url_for('dash.edit_user', user_id=user.id) }}" class="btn btn-primary">Edit</a>-->
-<!--            <a href="{{ url_for('dash.delete_user', user_id=user.id) }}" class="btn btn-danger">Delete</a>-->
-<!--            <a href="{{ url_for('dash.resolve_incident', incident_id=incident.id) }}"-->
-<!--               class="btn btn-success">Resolve</a>-->
-<!--            <a href="{{ url_for('dash.mark_pending', incident_id=incident.id) }}" class="btn btn-warning">Mark-->
-<!--                as Pending</a>-->
-        </td>
+<div class="alert alert-success">
+    Welcome, Admin! You have full access to manage incidents and users.
+</div>
 
-        </td>
-    </tr>
-    {% endfor %}
-    </tbody>
-</table>
+<div class="col-8">
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div class="col">
+            <div class="card h-100" style="margin-bottom: 10px;">
+                <div class="card-body">
+                    <h5 class="card-title">Total Incidents</h5>
+                    <p class="card-text">{{ total_incidents }}</p>
+                </div>
+            </div>
+            <div class="col text-center">
+            <a href="{{ url_for('dash.admin_incident_overview') }}" class="btn btn-outline-info">View Incidents</a>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100" style="margin-bottom: 10px;">
+                <div class="card-body">
+                    <h5 class="card-title">Total General Users</h5>
+                    <p class="card-text">{{ total_users }}</p>
+                </div>
+            </div>
+            <div class="col text-center">
+                <a href="{{ url_for('dash.admin_manage_users') }}" class="btn btn-outline-info">Manage Users</a>
+            </div>
+        </div>
+    </div>
 
-
+</div>
 {% endblock %}

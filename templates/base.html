@@ -63,12 +63,25 @@
                 <hr>
                 <ul class="nav nav-pills flex-column mb-auto">
                     {% if current_user.is_authenticated %}
-                    {% if current_user.role == 'admin' %}
+                    {% if current_user.account_type == 'admin' %}
                     <li class="nav-item">
                         <a href="{{ url_for('dash.admin_dashboard') }}"
                            class="nav-link text-white {% if request.endpoint == 'dash.admin_dashboard' %}active{% endif %}"
                            aria-label="Admin Dashboard">
                             <i class="fa fa-cogs"></i> Admin Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('dash.admin_incident_overview') }}"
+                           class="nav-link text-white {% if request.endpoint == 'dash.admin_incident_overview' %}active{% endif %}"
+                           aria-label="Admin Dashboard">
+                            <i class="fa fa-eye"></i> View all incidents
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('dash.admin_manage_users') }}"
+                           class="nav-link text-white {% if request.endpoint == 'dash.admin_manage_users' %}active{% endif %}">
+                            <i class="fa fa-user"></i> Manage Users
                         </a>
                     </li>
                     {% else %}
@@ -79,25 +92,19 @@
                             <i class="fa fa-home"></i> Dashboard
                         </a>
                     </li>
-                    {% endif %}
-                    <li>
+                     <li>
                         <a href="{{ url_for('incident.incidents_overview') }}"
                            class="nav-link text-white {% if request.endpoint == 'incident.incidents_overview' %}active{% endif %}">
-                            <svg class="bi me-2" width="16" height="16">
-                                <use xlink:href="#speedometer2"></use>
-                            </svg>
-                            Incidents
+                            <i class="fa fa-view"></i> Incidents
                         </a>
                     </li>
                     <li>
                         <a href="{{ url_for('incident.create_incident') }}"
                            class="nav-link text-white {% if request.endpoint == 'incident.create_incident' %}active{% endif %}">
-                            <svg class="bi me-2" width="16" height="16">
-                                <use xlink:href="#speedometer2"></use>
-                            </svg>
-                            Create Incidents
+                            <i class="fa fa-view"></i> Create Incidents
                         </a>
                     </li>
+                    {% endif %}
                     {% else %}
                     <li class="nav-item">
                         <a href="{{ url_for('auth.login') }}"
