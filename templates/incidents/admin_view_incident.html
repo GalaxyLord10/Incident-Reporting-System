@@ -30,10 +30,7 @@
             <div class="mb-3">
                 <strong>Status: </strong>{{ incident.status }}
             </div>
-            {% if current_user.account_type == 'admin' %}
-            <a href="{{ url_for('dash.admin_incident_overview') }}" class="btn btn-secondary">Back to Overview</a>
-            {% else %}
             <a href="{{ url_for('incident.incidents_overview') }}" class="btn btn-secondary">Back to Overview</a>
-            {%endif%}
+
         </div>
 {% endblock %}

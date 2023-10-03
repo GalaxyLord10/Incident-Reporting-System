@@ -4,7 +4,6 @@ from flask_login import login_required, current_user
 from forms.incident_form import IncidentForm
 from forms.incident_update_form import IncidentUpdateForm
 from models.db_models import Incident, db
-from utilities.utilities import admin_required
 
 incident = Blueprint('incident', __name__)
 
@@ -32,10 +31,8 @@ def view_incident(incident_id):
 def create_incident():
     form = IncidentForm()
     if form.validate_on_submit():
-        date_field = form.date_of_occurrence.data  # Assuming this is a date object
-        time_field = form.time_of_occurrence.data  # Assuming this is a time object
-
-        # Combine date and time into a single datetime object
+        date_field = form.date_of_occurrence.data
+        time_field = form.time_of_occurrence.data
         combined_datetime = datetime.combine(date_field, time_field)
         new_incident = Incident(user_id=current_user.id,
                                 system=form.system.data,
@@ -44,9 +41,7 @@ def create_incident():
                                 time_of_occurrence=combined_datetime,
                                 status=form.status.data)
         db.session.add(new_incident)
-        # Set the notification_status to 'Unread'
         new_incident.notification_status = 'Unread'
-
         db.session.commit()
         flash('Incident created successfully!', 'success')
         return redirect(url_for('incident.incidents_overview'))
@@ -57,8 +52,6 @@ def create_incident():
 @login_required
 def update_incident(incident_id):
     edit_incident = Incident.query.get_or_404(incident_id)
-    if edit_incident.user != current_user:
-        abort(403)
     form = IncidentUpdateForm()
     if form.validate_on_submit():
         edit_incident.system = form.system.data
@@ -68,7 +61,10 @@ def update_incident(incident_id):
         edit_incident.status = form.status.data
         db.session.commit()
         flash('Incident updated!', 'success')
-        return redirect(url_for('incident.incidents_overview'))
+        if current_user.account_type == 'admin':
+            return redirect(url_for('dash.admin_incident_overview'))
+        else:
+            return redirect(url_for('incident.incidents_overview'))
     elif request.method == 'GET':
         form.system.data = edit_incident.system
         form.product.data = edit_incident.product
@@ -78,7 +74,7 @@ def update_incident(incident_id):
     return render_template('incidents/update_incident.html', form=form)
 
 
-@incident.route('/delete_incident/<int:incident_id>', methods=['POST'])
+@incident.route('/delete_incident/<int:incident_id>', methods=['GET', 'POST'])
 @login_required
 def delete_incident(incident_id):
     incident_to_delete = Incident.query.get_or_404(incident_id)

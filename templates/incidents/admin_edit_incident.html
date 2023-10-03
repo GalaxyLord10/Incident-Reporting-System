@@ -13,7 +13,7 @@
     {% endwith %}
 
         <div class="container mt-5">
-        <h2>Update Incident</h2>
+        <h2>Edit Incident</h2>
         <form method="post">
             {{ form.hidden_tag() }}
             <div class="mb-3">
@@ -37,11 +37,7 @@
                 {{ form.status(class="form-select") }}
             </div>
             {{ form.submit(class="btn btn-primary") }}
-            {% if current_user.account_type == 'admin' %}
-            <a href="{{ url_for('dash.admin_incident_overview') }}" class="btn btn-danger">Cancel</a>
-            {% else %}
             <a href="{{ url_for('dash.dashboard') }}" class="btn btn-danger">Cancel</a>
-            {% endif %}
         </form>
     </div>
 
