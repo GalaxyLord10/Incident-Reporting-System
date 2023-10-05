@@ -17,12 +17,11 @@
 <select id="user-dropdown">
     <option value="">All Users</option>
     {% for user in users %}
-    {% if user.account_type != 'admin' %}
     <option value="{{ user.id }}"
-            {% if user.id|string== request.args.get('user_id') %}selected{% endif %}>
+    {% if user.id|string== request.args.get('user_id') %}
+    selected{% endif %}>
     {{ user.email }}
     </option>
-    {% endif %}
     {% endfor %}
 </select>
 

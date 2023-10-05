@@ -1,21 +1,25 @@
 from datetime import datetime
-from flask import Blueprint, flash, url_for, redirect, render_template, abort, request
+from flask import Blueprint, flash, url_for, redirect, render_template, request
 from flask_login import login_required, current_user
+from controllers.authentication import load_user
 from forms.incident_form import IncidentForm
 from forms.incident_update_form import IncidentUpdateForm
-from models.db_models import Incident, db
+from models.db_models import Incident
+from extensions import db
+from utilities.utilities import configure_logger
 
 incident = Blueprint('incident', __name__)
+user_activity_logger = configure_logger()
 
 
 @incident.route('/incidents_overview')
 @login_required
 def incidents_overview():
     if current_user.role == 'admin':
-        incidents = Incident.query.all()  # Admins can see all incidents
+        incidents = Incident.query.all()
     else:
         incidents = Incident.query.filter_by(
-            user_id=current_user.id).all()  # Regular users can only see their own incidents
+            user_id=current_user.id).all()
     return render_template('incidents/overview.html', incidents=incidents)
 
 
@@ -40,10 +44,12 @@ def create_incident():
                                 issue=form.issue.data,
                                 time_of_occurrence=combined_datetime,
                                 status=form.status.data)
+        user = load_user(new_incident.user_id)
         db.session.add(new_incident)
         new_incident.notification_status = 'Unread'
         db.session.commit()
         flash('Incident created successfully!', 'success')
+        user_activity_logger.info(f"{user.email} created a new incident {new_incident.system}")
         return redirect(url_for('incident.incidents_overview'))
     return render_template('incidents/create_incident.html', title='Create Incident', form=form)
 
