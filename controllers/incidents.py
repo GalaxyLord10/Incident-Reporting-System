@@ -6,10 +6,9 @@ from forms.incident_form import IncidentForm
 from forms.incident_update_form import IncidentUpdateForm
 from models.db_models import Incident
 from extensions import db
-from utilities.utilities import configure_logger
+from utilities.utilities import db_commit, flash_and_log
 
 incident = Blueprint('incident', __name__)
-user_activity_logger = configure_logger()
 
 
 @incident.route('/incidents_overview')
@@ -47,9 +46,8 @@ def create_incident():
         user = load_user(new_incident.user_id)
         db.session.add(new_incident)
         new_incident.notification_status = 'Unread'
-        db.session.commit()
-        flash('Incident created successfully!', 'success')
-        user_activity_logger.info(f"{user.email} created a new incident {new_incident.system}")
+        db_commit()
+        flash_and_log('Incident created successfully!', 'success', f"{user.email} created a new incident {new_incident.system}")
         return redirect(url_for('incident.incidents_overview'))
     return render_template('incidents/create_incident.html', title='Create Incident', form=form)
 
@@ -65,7 +63,7 @@ def update_incident(incident_id):
         edit_incident.issue = form.issue.data
         edit_incident.time_of_occurrence = form.time_of_occurrence.data
         edit_incident.status = form.status.data
-        db.session.commit()
+        db_commit()
         flash('Incident updated!', 'success')
         if current_user.account_type == 'admin':
             return redirect(url_for('dash.admin_incident_overview'))
@@ -85,7 +83,7 @@ def update_incident(incident_id):
 def delete_incident(incident_id):
     incident_to_delete = Incident.query.get_or_404(incident_id)
     db.session.delete(incident_to_delete)
-    db.session.commit()
+    db_commit()
     flash('Incident deleted successfully!', 'success')
     return redirect(url_for('incident.incidents_overview'))
 

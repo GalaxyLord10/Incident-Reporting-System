@@ -46,8 +46,6 @@ def db_commit(add_value=None):
             db.session.commit()
     except Exception as e:
         db.session.rollback()
-        user_activity_logger = configure_logger()
-        user_activity_logger.error(f"Database commit failed: {str(e)}")
-        flash("An error occurred. Please try again.", "danger")
+        flash_and_log("An error occurred. Please try again.", "danger", f"Database commit failed: {str(e)}")
 
 

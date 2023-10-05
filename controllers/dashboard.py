@@ -6,10 +6,9 @@ from forms.admin_user_edit_form import AdminUserEditForm
 from forms.change_password_form import ChangePasswordForm
 from forms.incident_update_form import IncidentUpdateForm
 from models.db_models import Incident, User
-from utilities.utilities import admin_required, configure_logger
+from utilities.utilities import admin_required, db_commit, flash_and_log
 
 dash = Blueprint('dash', __name__)
-user_activity_logger = configure_logger()
 
 
 @dash.route('/dashboard')
@@ -50,7 +49,7 @@ def admin_incident_overview():
     selected_user_id = request.args.get('user_id')
     all_users = User.query.all()
     if selected_user_id:
-        all_incidents = Incident.query.filter_by(user_id=selected_user_id).all()
+        all_incidents = Incident.query.filter_by(user_id=selected_user_id).all() # get all incidents
     else:
         all_incidents = Incident.query.all()
     return render_template('incidents/admin_incident_overview.html', incidents=all_incidents, users=all_users)
@@ -66,9 +65,8 @@ def edit_user(user_id):
         user.email = form.email.data
         user.password = generate_password_hash(form.password.data)
         user.account_type = form.account_type.data
-        handle_db_commit()
-        flash(f"User {user.email} updated successfully!", 'success')
-        user_activity_logger.info(f"User {user.email} was updated.")
+        db_commit()
+        flash_and_log(f"User {user.email} updated successfully!", 'success', f"User {user.email} was updated.")
         return redirect(url_for('dash.admin_dashboard'))
     return render_template('dashboard/admin_user_edit_form.html', form=form, user=user)
 
@@ -79,9 +77,8 @@ def edit_user(user_id):
 def delete_user(user_id):
     user = User.query.get_or_404(user_id)
     db.session.delete(user)
-    db.session.commit()
-    flash(f"User {user.email} deleted successfully!", 'success')
-    user_activity_logger.info(f"User {user.email} deleted!")
+    db_commit()
+    flash_and_log(f"User {user.email} deleted successfully!", 'success', f"User {user.email} deleted!")
     return redirect(url_for('dash.admin_dashboard'))
 
 
@@ -92,9 +89,8 @@ def user_profile():
     if form.validate_on_submit():
         if form.new_password.data == form.confirm_password.data:
             current_user.password = generate_password_hash(form.new_password.data)
-            handle_db_commit()
-            flash('Password changed successfully', 'success')
-            user_activity_logger.info(f"{current_user.email} password was changed.")
+            db_commit()
+            flash_and_log('Password changed successfully', 'success', f"{current_user.email} password was changed.")
             return redirect(url_for('dash.user_profile'))
         else:
             flash('Passwords do not match', 'danger')
@@ -114,7 +110,7 @@ def admin_edit_incident(incident_id):
         incident.issue = form.issue.data
         incident.time_of_occurrence = form.time_of_occurrence.data
         incident.status = form.status.data
-        db.session.commit()
+        db_commit()
         flash('Incident updated successfully', 'success')
         return redirect(url_for('dash.admin_incident_overview'))
 
@@ -127,7 +123,7 @@ def admin_edit_incident(incident_id):
 def admin_delete_incident(incident_id):
     incident = Incident.query.get_or_404(incident_id)
     db.session.delete(incident)
-    db.session.commit()
+    db_commit()
     flash('Incident deleted successfully', 'success')
     return redirect(url_for('admin_dashboard.incident_overview'))
 
@@ -138,7 +134,7 @@ def admin_delete_incident(incident_id):
 def admin_view_incident(incident_id):
     incident = Incident.query.get_or_404(incident_id)
     db.session.delete(incident)
-    db.session.commit()
+    db_commit()
     flash('Incident deleted successfully', 'success')
     return redirect(url_for('admin_dashboard.incident_overview'))
 
