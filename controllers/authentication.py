@@ -4,19 +4,10 @@ from models.db_models import User
 from forms.registration_form import RegistrationForm
 from forms.login_form import LoginForm
 from extensions import login_manager
-from utilities.utilities import configure_logger
+from utilities.utilities import configure_logger, db_commit, query_user_by_email, flash_and_log
 
 auth = Blueprint('auth', __name__)
 user_activity_logger = configure_logger()
-
-
-def query_user_by_email(email):
-    return User.query.filter_by(email=email).first()
-
-
-def flash_and_log(message, level, log_message):
-    flash(message, level)
-    user_activity_logger.info(log_message)
 
 
 @auth.route('/register', methods=['GET', 'POST'])
@@ -24,13 +15,19 @@ def register():
     form = RegistrationForm()
     try:
         if form.validate_on_submit():
-            user = query_user_by_email(form.email.data)
+            user = User.query.filter_by(email=form.email.data).first()
             if user:
-                flash_and_log('Email already exists', 'warning', f"Registration failed. Email {form.email.data} already exists.")
+                flash('Email already exists', 'warning')
                 return redirect(url_for('auth.register'))
-            User.create_user(email=form.email.data, password=form.password.data)
-            flash_and_log('Registration successful!', 'success', f"{form.email.data} has registered.")
+
+            new_user = User(email=form.email.data)
+            new_user.password = form.password.data
+            db_commit(new_user)
+            flash('Registration successful!', 'success')
+            user_activity_logger.info(f"{form.email.data} has registered.")
             return redirect(url_for('auth.login'))
+    except AssertionError as e:
+        flash(str(e), 'danger')
     except Exception as e:
         user_activity_logger.error(f"An error occurred during registration: {str(e)}")
         flash('An unexpected error occurred. Please try again.', 'danger')

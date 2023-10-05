@@ -25,6 +25,18 @@ class User(db.Model, UserMixin):
             raise AssertionError("Invalid role")
         return role
 
+    @validates('email')
+    def validate_email(self, key, email):
+        if '@' not in email:
+            raise AssertionError("Provided email is not a valid email address.")
+        return email
+
+    @validates('password')
+    def validate_password(self, key, password):
+        if len(password) < 3:
+            raise AssertionError("Password must be at least 8 characters long.")
+        return generate_password_hash(password)
+
     def set_password(self, password):
         self.password = generate_password_hash(password)
 

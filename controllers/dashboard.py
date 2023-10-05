@@ -66,7 +66,7 @@ def edit_user(user_id):
         user.email = form.email.data
         user.password = generate_password_hash(form.password.data)
         user.account_type = form.account_type.data
-        db.session.commit()
+        handle_db_commit()
         flash(f"User {user.email} updated successfully!", 'success')
         user_activity_logger.info(f"User {user.email} was updated.")
         return redirect(url_for('dash.admin_dashboard'))
@@ -90,24 +90,15 @@ def delete_user(user_id):
 def user_profile():
     form = ChangePasswordForm()
     if form.validate_on_submit():
-        if form.new_password == form.confirm_password:
-            User.password = generate_password_hash(form.new_password)
-            db.session.commit()
+        if form.new_password.data == form.confirm_password.data:
+            current_user.password = generate_password_hash(form.new_password.data)
+            handle_db_commit()
             flash('Password changed successfully', 'success')
-            user_activity_logger.info(f"{User.email} password was changed.")
-        return redirect(url_for('user_profile.user_profile'))
+            user_activity_logger.info(f"{current_user.email} password was changed.")
+            return redirect(url_for('dash.user_profile'))
+        else:
+            flash('Passwords do not match', 'danger')
     return render_template('user_profile/profile.html', form=form, email=current_user.email)
-
-
-@dash.route('/create_incident_for_user/<int:incident_id>', methods=['GET', 'POST'])
-@admin_required
-@login_required
-def create_incident_for_user(incident_id):
-    incident = Incident.query.get_or_404(incident_id)
-    incident.status = 'Resolved'
-    db.session.commit()
-    flash(f"Incident {incident.id} marked as Resolved.", 'success')
-    return redirect(url_for('dash.admin_dashboard'))
 
 
 @dash.route('/admin_edit_incident/<int:incident_id>', methods=['GET', 'POST'])
