@@ -9,6 +9,7 @@ The Incident Reporting System is a web-based application that provides a compreh
 ### User Authentication
 - Secure login and session management.
 - Registration for general users and administrators.
+- Note: To register as an admin, you will have to go to /admin_register directly and sign up which will automatically make you into an administrator
 - Validates form inputs and checks for existing email addresses.
 
 ### Dashboard
