@@ -1,63 +1,64 @@
-Sure! Here's a draft of the README.md for the Incident Reporting System:
-
----
-
 # Incident Reporting System
 
 ## Overview
-The Incident Reporting System is a web application that allows users to report, view, and manage incidents. It offers features such as user authentication, incident reporting, and an admin dashboard.
 
-## Setup
-
-### Configuration
-- The application's configurations are located in `config.py`, which includes a default configuration and a test configuration.
+The Incident Reporting System is a web-based application that provides a comprehensive solution for reporting, viewing, and managing incidents. Developed with Python's Flask framework, this application is built upon an MVC (Model-View-Controller) architecture. It offers a wide range of features like user authentication, role-based access, incident reporting, and administrative controls.
 
 ## Features
 
 ### User Authentication
-- Users can register, log in, and create admin accounts.
-- Templates: `login.html`, `register.html`
+- Secure login and session management.
+- Registration for general users and administrators.
+- Validates form inputs and checks for existing email addresses.
 
 ### Dashboard
-- Users have a main dashboard after logging in.
-- Admins have access to an admin dashboard.
-- Template: `dashboard.html`
-
-### Home Page
-- Main landing page or homepage of the application.
-- Template: `home.html`
+- User-specific dashboard based on role (Admin or General User).
+- Admin dashboard provides an overview of total users and incidents.
 
 ### Incident Management
-- Users can report new incidents.
-- Admins can view an overview of all incidents.
-- Incidents can be updated or deleted.
-- Templates: `create_incident.html`, `overview.html`, `update_incident.html`, `view_incident.html`
+- Allows users to create, view, and update incidents.
+- Administrators can manage all incidents, update their status, and view them based on user filters.
 
-## Database Models
-- **User**: Represents a user with attributes such as email, password, and role.
-- **Incident**: Represents an incident with details like system, product, and issue description.
-- **IncidentUpdate**: Represents updates to an incident.
-- **Permission**: Placeholder model for potential future implementation of permissions.
+### User Management (Admin Only)
+- View, edit, and delete users.
+- Change user roles and account types.
 
-## Forms
-- **AdminUserCreationForm**: Form for creating admin users.
-- **IncidentForm**: Form for reporting incidents.
-- **IncidentUpdateForm**: Form for updating incidents.
-- **LoginForm**: Form for user login.
-- **RegistrationForm**: Form for user registration.
+### Logging
+- Logs for user activities are maintained and can be viewed by administrators.
 
-## Getting Started
+## Setup and Installation
 
 ### Prerequisites
-- Python 3.x
-- Flask
-- Flask-WTF
-- SQLAlchemy
 
-### Installation
-1. Clone the repository: `git clone https://github.com/GalaxyLord10/Incident-Reporting-System.git`
-2. Navigate to the project directory: `cd Incident-Reporting-System`
-3. Install required packages: `pip install -r requirements.txt`
-4. Set up the database by running `setup_db.py`
-5. Run the application: `flask run`
-6. Default admin credentials can be setup by running `create_admin_user.py`
+- Python 3.x
+- SQLite (Or you can configure another DBMS)
+  
+### Installation Steps
+
+1. Clone the repository to your local machine.
+2. Navigate to the project directory.
+3. Install the required Python packages:
+    ```bash
+    pip install -r requirements.txt
+    ```
+4. Run the database setup script:
+    ```bash
+    python setup_db.py
+    ```
+5. Start the Flask application:
+    ```bash
+    python app.py
+    ```
+
+### Configuration
+
+The configurations are located in `config.py`. For a production environment, it is advisable to set the `SECRET_KEY` and database credentials through environment variables.
+
+## Dependencies
+
+The application has several dependencies, including:
+
+- Flask: For web development
+- Flask-Login: For session management and user authentication
+- SQLAlchemy: For database interaction
+- Werkzeug: For password hashing
