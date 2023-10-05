@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-6 offset-md-3">
+          <h1>Profile</h1>
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Email</h5>
+          <p class="card-text">{{ email }}</p>
+        </div>
+      </div>
+        <div class="col">
+          <a href="{{ url_for('dash.dashboard') }}" class="btn btn-outline-dark w-100 mt-3">Back to dashboard</a>
+        </div>
+      <div class="card mt-3">
+        <div class="card-body">
+          <h5 class="card-title">Change Password</h5>
+          <form method="POST" action="{{ url_for('dash.user_profile') }}">
+            {{ form.hidden_tag() }}
+
+            <div class="mb-3">
+              {{ form.new_password.label(class="form-label") }}
+              {{ form.new_password(class="form-control") }}
+            </div>
+
+            <div class="mb-3">
+              {{ form.confirm_password.label(class="form-label") }}
+              {{ form.confirm_password(class="form-control") }}
+            </div>
+
+            <button type="submit" class="btn btn-outline-primary">Change Password</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

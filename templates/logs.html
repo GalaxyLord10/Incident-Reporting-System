@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row">
+    <div class="col">
+      <h1>Application Logs</h1>
+      <pre>
+        {% for line in log_data %}
+          {{ line }}
+        {% endfor %}
+      </pre>
+    </div>
+  </div>
+</div>
+{% endblock %}

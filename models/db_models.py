@@ -33,7 +33,7 @@ class Incident(db.Model):
     product = db.Column(db.String(120))
     issue = db.Column(db.Text)
     time_of_occurrence = db.Column(db.DateTime)
-    status = db.Column(db.String(80), default='Ongoing')  # Default status
+    status = db.Column(db.String(80), default='Ongoing')
 
 
 class IncidentUpdate(db.Model):
@@ -42,10 +42,4 @@ class IncidentUpdate(db.Model):
     description = db.Column(db.Text)
     time = db.Column(db.DateTime, default=db.func.current_timestamp())
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-
-
-class Permission(db.Model):
-    # This table can be used if not using AAD for permissions
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), unique=True, nullable=False)
 
