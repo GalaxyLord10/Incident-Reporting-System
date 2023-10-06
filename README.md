@@ -27,6 +27,60 @@ The Incident Reporting System is a web-based application that provides a compreh
 ### Logging
 - Logs for user activities are maintained and can be viewed by administrators.
 
+### Entities and Attributes:
+
+1. **User**
+    - `id` (Primary Key)
+    - `email` (Unique, Not Null)
+    - `password` (Not Null)
+    - `role` (Default: "IncidentReportView")
+    - `account_type` (Default: "general_user")
+    
+2. **Incident**
+    - `id` (Primary Key)
+    - `user_id` (Foreign Key, Not Null)
+    - `system`
+    - `product`
+    - `issue`
+    - `time_of_occurrence`
+    - `status` (Default: "Ongoing")
+    
+3. **IncidentUpdate**
+    - `id` (Primary Key)
+    - `incident_id` (Foreign Key, Not Null)
+    - `description`
+    - `time` (Default: Current Timestamp)
+    - `user_id` (Foreign Key, Not Null)
+
+### Relationships:
+
+1. A `User` can report multiple `Incidents`. Hence, one-to-many between `User` and `Incident`.
+    - Foreign Key in `Incident`: `user_id`
+  
+2. An `Incident` can have multiple `IncidentUpdates`. Hence, one-to-many between `Incident` and `IncidentUpdate`.
+    - Foreign Key in `IncidentUpdate`: `incident_id`
+
+3. An `IncidentUpdate` is created by a `User`. Hence, one-to-many between `User` and `IncidentUpdate`.
+    - Foreign Key in `IncidentUpdate`: `user_id`
+
+Entity-Relationship-Diagram:
+
+```
++---------------+      +---------------+      +------------------+
+|     User      |      |   Incident    |      |  IncidentUpdate  |
++---------------+      +---------------+      +------------------+
+| PK id         |<-----| FK user_id    |<-----| FK incident_id   |
+| email         |      | PK id         |      | PK id            |
+| password      |      | system        |      | description      |
+| role          |      | product       |      | time             |
+| account_type  |      | issue         |------| FK user_id        |
++---------------+      | time_of_occurrence |  +------------------+
+                       | status             |
+                       +--------------------+
+```
+
+In this ERD, "PK" denotes a Primary Key, "FK" denotes a Foreign Key, and the arrows indicate the direction of the relationships.
+
 ## Setup and Installation
 
 ### Prerequisites
